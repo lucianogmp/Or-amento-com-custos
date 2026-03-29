@@ -243,6 +243,16 @@
   </div>
 </div>
 
+    <div id="custo-vinil-box" class="space-y-1.5">
+  <label class="block text-sm font-medium text-slate-600 dark:text-slate-400">
+    Custo do Vinil (m²)
+  </label>
+
+  <input type="number" id="custoVinil" value="45" step="any"
+    class="w-full bg-slate-50 dark:bg-[#232a3a] text-slate-900 dark:text-white
+           border border-slate-300 dark:border-[#374151] rounded-lg px-4 py-3 text-sm">
+</div>
+    
     <!-- NOVO: TEM ARTE -->
     <div class="space-y-1.5">
       <label class="block text-sm font-medium text-slate-600 dark:text-slate-400">
@@ -292,6 +302,13 @@
           <p id="total" class="text-3xl sm:text-4xl font-bold text-brand-600 dark:text-brand-400 transition-all duration-300">
             R$ 0,00
           </p>
+          
+          <!-- 👇 NOVO BLOCO -->
+<div id="custo-box" class="text-center py-2 hidden">
+  <p class="text-xs text-slate-400">Custo</p>
+  <p id="custoTotal" class="text-lg font-semibold text-red-500">R$ 0,00</p>
+</div>
+          
         </div>
 
         <div class="grid grid-cols-2 gap-3">
@@ -410,6 +427,17 @@ function calcular() {
 
   const area = l * a;
   const valorBase = area * v;
+  
+  // CUSTO (somente vinil)
+let custoM2 = 0;
+let custoUnitario = 0;
+let custoTotal = 0;
+
+if (material === 'vinil') {
+  custoM2 = parseFloat(custoVinil.value) || 45;
+  custoUnitario = area * custoM2;
+  custoTotal = custoUnitario * q;
+}
 
   // Margem dinâmica
   let margem = 0;
@@ -440,6 +468,9 @@ function calcular() {
     margemPercent: margem * 100,
     temArte: temArte,
     material: material
+    custoUnitario: custoUnitario,
+custoTotal: custoTotal,
+custoM2: custoM2,
   };
 }
   
@@ -776,6 +807,20 @@ function gerarPDF() {
 }
 
 render();
+  
+// 👇 COLE AQUI (PASSO 2)
+const custoBox = document.getElementById("custo-vinil-box");
+
+document.querySelectorAll('input[name="material"]').forEach(radio => {
+  radio.addEventListener("change", () => {
+    const material = document.querySelector('input[name="material"]:checked').value;
+    custoBox.style.display = material === "vinil" ? "block" : "none";
+  });
+});
+
+// inicial
+custoBox.style.display = "block";
+
 </script>
 
 </body>
